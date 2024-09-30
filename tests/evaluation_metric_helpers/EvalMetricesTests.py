@@ -1,13 +1,16 @@
 from unittest import TestCase
-
 import pytest
 from pandas import DataFrame
-
-from yld_utils.classification.EvaluationMetricHelper import \
-    EvaluationMetricHelper
-from yld_utils.constants import (ACCURACY_COL, CLASS_COL, F1_SCORE_COL,
-                                 MODEL_COL, PRECISION_COL, PREDICTION_COL,
-                                 RECALL_COL)
+from yld_utils.classification.EvaluationMetricHelper import EvaluationMetricHelper
+from yld_utils.constants import (
+    ACCURACY_COL,
+    CLASS_COL,
+    F1_SCORE_COL,
+    MODEL_COL,
+    PRECISION_COL,
+    PREDICTION_COL,
+    RECALL_COL
+)
 
 
 class EvalMetricesTests(TestCase):

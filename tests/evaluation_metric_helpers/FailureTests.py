@@ -1,9 +1,6 @@
 from unittest import TestCase
-
 from pandas import DataFrame
-
-from yld_utils.classification.EvaluationMetricHelper import \
-    EvaluationMetricHelper
+from yld_utils.classification.EvaluationMetricHelper import EvaluationMetricHelper
 
 
 class FailureTests(TestCase):
