@@ -1,0 +1,8 @@
+[build-system]
+requires=["setuptools", "wheel"]
+
+[tool.pytest.ini_options]
+junit_family="xunit1"
+python_classes="*Tests"
+python_files=["*Tests.py"]
+testpaths=["tests"]
