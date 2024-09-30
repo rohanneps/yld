@@ -2,7 +2,10 @@
 requires=["setuptools", "wheel"]
 
 [tool.pytest.ini_options]
-junit_family="xunit1"
+markers=[
+    "data_eval: Evaluate dataframe tests",
+    "file_eval: Evaluate dataframe from file tests",
+]
 python_classes="*Tests"
 python_files=["*Tests.py"]
 testpaths=["tests"]

@@ -29,7 +29,7 @@ class EvaluationMetricHelper:
     def calculate_accuracy_from_file(cls, file_path):
         df: Optional[DataFrame] = FileHelper.read_csv_from_path(file_path)
         if df is not None:
-            cls.calculate_accuracy_from_dataframe(df)
+            return cls.calculate_accuracy_from_dataframe(df)
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -48,7 +48,7 @@ class EvaluationMetricHelper:
     def calculate_f1_score_from_file(cls, file_path):
         df: Optional[DataFrame] = FileHelper.read_csv_from_path(file_path)
         if df is not None:
-            cls.calculate_f1_score_from_dataframe(df)
+            return cls.calculate_f1_score_from_dataframe(df)
        
     @classmethod
     @_logger.log_and_catch_exception
@@ -64,7 +64,7 @@ class EvaluationMetricHelper:
     def calculate_precision_from_file(cls, file_path: str):
         df: Optional[DataFrame] = FileHelper.read_csv_from_path(file_path)
         if df is not None:
-            cls.calculate_precision_from_dataframe(df)
+            return cls.calculate_precision_from_dataframe(df)
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -80,7 +80,7 @@ class EvaluationMetricHelper:
     def calculate_recall_from_file(cls, file_path: str):
         df: DataFrame = FileHelper.read_csv_from_path(file_path)
         if df is not None:
-            cls.calculate_recall_from_dataframe(df)
+            return cls.calculate_recall_from_dataframe(df)
      
     @classmethod
     @_logger.log_and_catch_exception
