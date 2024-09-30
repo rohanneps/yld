@@ -1,10 +1,14 @@
 from typing import Optional
-
 from pandas import DataFrame
-
-from yld_utils.constants import (ACCURACY_COL, CLASS_COL, F1_SCORE_COL,
-                                 MODEL_COL, PRECISION_COL, PREDICTION_COL,
-                                 RECALL_COL)
+from yld_utils.constants import (
+    ACCURACY_COL,
+    CLASS_COL,
+    F1_SCORE_COL,
+    MODEL_COL,
+    PRECISION_COL,
+    PREDICTION_COL,
+    RECALL_COL
+)
 from yld_utils.utils.FileHelper import FileHelper
 from yld_utils.utils.LogHelper import LogHelper
 
