@@ -22,7 +22,8 @@ class LogHelper:
 
         return wrapper
 
-    def __init__(self):
+    def __init__(self) -> None:
+        self._logger: logging.Logger
         self._init_logging()
 
     def _init_logging(self) -> None:

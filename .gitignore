@@ -15,9 +15,7 @@ venv/*
 build/*
 
 *.csv
-
-
-
+.pytest_cache/
 
 .vscode/*
 !.vscode/settings.json
