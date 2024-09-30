@@ -36,7 +36,7 @@ class EvaluationMetricHelper:
             how="inner",
         )
         acc_df[ACCURACY_COL] = acc_df[cls.TRUE_POSTIVE_COL] / acc_df[PREDICTION_COL]
-        return acc_df[[MODEL_COL, ACCURACY_COL]]
+        return cls._aggegrate_evaluation_by_model(ACCURACY_COL, acc_df)
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -54,9 +54,9 @@ class EvaluationMetricHelper:
             recall_df, on=[MODEL_COL], how="inner"
         )
         base_eval_metrics_df[F1_SCORE_COL] = (
-            2 * base_eval_metrics_df[PRECISION_COL] * base_eval_metrics_df[RECALL_COL]
+            (2 * base_eval_metrics_df[PRECISION_COL] * base_eval_metrics_df[RECALL_COL])
         ) / (base_eval_metrics_df[PRECISION_COL] + base_eval_metrics_df[RECALL_COL])
-        return base_eval_metrics_df[[MODEL_COL, F1_SCORE_COL]]
+        return cls._aggegrate_evaluation_by_model(F1_SCORE_COL, base_eval_metrics_df)
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -75,7 +75,21 @@ class EvaluationMetricHelper:
             base_eval_metrics_df[cls.TRUE_POSTIVE_COL]
             + base_eval_metrics_df[cls.FALSE_POSTIVE_COL]
         )
-        return base_eval_metrics_df[[MODEL_COL, PRECISION_COL]]
+        return cls._aggegrate_evaluation_by_model(PRECISION_COL, base_eval_metrics_df)
+
+    @classmethod
+    def _aggegrate_evaluation_by_model(cls, col_name: str, eval_metrics_df: DataFrame) -> DataFrame:
+        return (
+            eval_metrics_df[
+                [
+                    MODEL_COL,
+                    col_name
+                ]
+            ]
+            .groupby([MODEL_COL])
+            .mean()
+            .reset_index()
+        )
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -94,7 +108,7 @@ class EvaluationMetricHelper:
             base_eval_metrics_df[cls.TRUE_POSTIVE_COL]
             + base_eval_metrics_df[cls.FALSE_NEGATIVE_COL]
         )
-        return base_eval_metrics_df[[MODEL_COL, RECALL_COL]]
+        return cls._aggegrate_evaluation_by_model(RECALL_COL, base_eval_metrics_df)
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -112,6 +126,8 @@ class EvaluationMetricHelper:
         prediction_df[cls.TRUE_POSTIVE_COL] = (
             prediction_df[CLASS_COL] == prediction_df[PREDICTION_COL]
         )
+
+        # compute TP per model-class
         tp_df = (
             prediction_df[prediction_df[cls.TRUE_POSTIVE_COL]]
             .groupby([MODEL_COL, CLASS_COL])[PREDICTION_COL]
@@ -119,7 +135,9 @@ class EvaluationMetricHelper:
             .reset_index()
             .rename(columns={PREDICTION_COL: cls.TRUE_POSTIVE_COL})
         )
+
         rem_df = prediction_df[prediction_df[cls.TRUE_POSTIVE_COL] != True]
+        # compute FN per model-class
         fn_df = (
             rem_df.groupby([MODEL_COL, CLASS_COL])[PREDICTION_COL]
             .count()
@@ -127,6 +145,7 @@ class EvaluationMetricHelper:
             .rename(columns={PREDICTION_COL: cls.FALSE_NEGATIVE_COL})
         )
 
+        # compute FN per model-class
         fp_df = (
             rem_df.groupby([MODEL_COL, PREDICTION_COL])[CLASS_COL]
             .count()
@@ -135,20 +154,12 @@ class EvaluationMetricHelper:
                 columns={CLASS_COL: cls.FALSE_POSTIVE_COL, PREDICTION_COL: CLASS_COL}
             )
         )
-        eval_metrics_df = tp_df.merge(fn_df, on=[MODEL_COL, CLASS_COL], how="inner")
+
+        # merging base eval metrices
+        eval_metrics_df = tp_df.merge(fn_df, on=[MODEL_COL, CLASS_COL], how="left")
         eval_metrics_df = eval_metrics_df.merge(
-            fp_df, on=[MODEL_COL, CLASS_COL], how="inner"
+            fp_df, on=[MODEL_COL, CLASS_COL], how="left"
         )
-        return (
-            eval_metrics_df[
-                [
-                    MODEL_COL,
-                    cls.TRUE_POSTIVE_COL,
-                    cls.FALSE_POSTIVE_COL,
-                    cls.FALSE_NEGATIVE_COL,
-                ]
-            ]
-            .groupby([MODEL_COL])
-            .sum()
-            .reset_index()
-        )
+        eval_metrics_df.fillna(value=0, inplace=True)
+        # aggregate base eval metrices per model-class
+        return eval_metrics_df
