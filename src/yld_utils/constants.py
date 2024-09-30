@@ -14,4 +14,3 @@ ACCURACY_COL: str = "accuracy"
 F1_SCORE_COL: str = "f1_score"
 PRECISION_COL: str = "precision"
 RECALL_COL: str = "recall"
-
