@@ -22,7 +22,7 @@ class EvalMetricesTests(TestCase):
             PREDICTION_COL: ["C1", "C2", "C1", "C2", "C1", "C2", "C1", "C2"],
         }
         self.input_df = DataFrame(data=data)
-        self.test_file_path: str = "./model_output.csv"
+        self.test_file_path: str = "./test_model.csv"
 
     @pytest.mark.data_eval
     def test_accuracy_from_data(self):

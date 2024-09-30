@@ -1,0 +1,9 @@
+model_name,class,prediction
+model1,C1,C1
+model1,C1,C2
+model1,C2,C1
+model1,C2,C2
+model2,C1,C1
+model2,C1,C2
+model2,C2,C1
+model2,C2,C2
