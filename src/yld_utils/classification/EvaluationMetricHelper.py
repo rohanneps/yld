@@ -11,12 +11,13 @@ from yld_utils.constants import (
 )
 from yld_utils.utils import FileHelper, LogHelper
 
+
 _logger = LogHelper()
 
 
 class EvaluationMetricHelper:
-    FALSE_POSTIVE_COL: str = "fp"
     FALSE_NEGATIVE_COL: str = "fn"
+    FALSE_POSTIVE_COL: str = "fp"
     TRUE_POSTIVE_COL: str = "tp"
 
     @classmethod
@@ -46,16 +47,41 @@ class EvaluationMetricHelper:
 
     @classmethod
     @_logger.log_and_catch_exception
-    def calculate_f1_score_from_dataframe(cls, prediction_df: DataFrame) -> DataFrame:
-        precision_df: DataFrame = cls.calculate_precision_from_dataframe(prediction_df)
-        recall_df: DataFrame = cls.calculate_recall_from_dataframe(prediction_df)
-        f1_score_df = precision_df.merge(
-            recall_df, on=[MODEL_COL], how="inner"
+    def calculate_all_eval_metrices_from_data(cls, prediction_df: DataFrame) -> DataFrame:
+        base_eval_metrics_df: DataFrame = cls._calculate_tp_fp_and_fn(prediction_df)
+        model_total_preds_df = (
+            prediction_df.groupby([MODEL_COL])[PREDICTION_COL].count().reset_index()
         )
+        acc_df = model_total_preds_df.merge(
+            base_eval_metrics_df[[MODEL_COL, cls.TRUE_POSTIVE_COL]]
+            .groupby([MODEL_COL])
+            .sum()
+            .reset_index(),
+            on=[MODEL_COL],
+            how="inner",
+        )
+        acc_df[ACCURACY_COL] = acc_df[cls.TRUE_POSTIVE_COL] / acc_df[PREDICTION_COL]
+        acc_df = cls._aggegrate_evaluation_by_model(ACCURACY_COL, acc_df)
+        f1_score_df = cls.calculate_f1_score_from_dataframe(prediction_df, False)
+        return acc_df.merge(f1_score_df, on=[MODEL_COL], how="inner")
+   
+    @classmethod
+    @_logger.log_and_catch_exception
+    def calculate_all_eval_metrices_from_file(cls, file_path):
+        df: Optional[DataFrame] = cls._read_from_file(file_path)
+        if df is not None:
+            return cls.calculate_all_eval_metrices_from_data(df)
+
+    @classmethod
+    @_logger.log_and_catch_exception
+    def calculate_f1_score_from_dataframe(cls, prediction_df: DataFrame, override_columns: bool = True) -> DataFrame:
+        f1_score_df = cls.calculate_precision_and_recall_from_dataframe(prediction_df)
         f1_score_df[F1_SCORE_COL] = (
             (2 * f1_score_df[PRECISION_COL] * f1_score_df[RECALL_COL])
         ) / (f1_score_df[PRECISION_COL] + f1_score_df[RECALL_COL])
-        return f1_score_df[[MODEL_COL, F1_SCORE_COL]]
+        if override_columns:
+            f1_score_df = f1_score_df[[MODEL_COL, F1_SCORE_COL]]
+        return f1_score_df
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -77,20 +103,25 @@ class EvaluationMetricHelper:
         return cls._aggegrate_evaluation_by_model(PRECISION_COL, base_eval_metrics_df)
 
     @classmethod
-    def _aggegrate_evaluation_by_model(cls, col_name: str, eval_metrics_df: DataFrame) -> DataFrame:
-        return (
-            eval_metrics_df[[MODEL_COL, col_name]]
-            .groupby([MODEL_COL])
-            .mean()
-            .reset_index()
-        )
-
-    @classmethod
     @_logger.log_and_catch_exception
     def calculate_precision_from_file(cls, file_path: str):
         df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_precision_from_dataframe(df)
+
+    @classmethod
+    @_logger.log_and_catch_exception
+    def calculate_precision_and_recall_from_dataframe(cls, prediction_df: DataFrame) -> DataFrame:
+        precision_df: DataFrame = cls.calculate_precision_from_dataframe(prediction_df)
+        recall_df: DataFrame = cls.calculate_recall_from_dataframe(prediction_df)
+        return precision_df.merge(recall_df, on=[MODEL_COL], how="inner")
+
+    @classmethod
+    @_logger.log_and_catch_exception
+    def calculate_precision_and_recall_from_file(cls, file_path: str):
+        df: Optional[DataFrame] = cls._read_from_file(file_path)
+        if df is not None:
+            return cls.calculate_precision_and_recall_from_dataframe(df)
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -110,6 +141,15 @@ class EvaluationMetricHelper:
         df: DataFrame = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_recall_from_dataframe(df)
+
+    @classmethod
+    def _aggegrate_evaluation_by_model(cls, col_name: str, eval_metrics_df: DataFrame) -> DataFrame:
+        return (
+            eval_metrics_df[[MODEL_COL, col_name]]
+            .groupby([MODEL_COL])
+            .mean()
+            .reset_index()
+        )
 
     @classmethod
     @_logger.log_and_catch_exception
