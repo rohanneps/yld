@@ -1,4 +1,14 @@
 
+# Evaluation Metrics Util
+
+This project is used to evalaute classification model performance.
+
+
+## Tech Stack
+
+Python, Pandas
+
+
 ## Run Locally
 
 Clone the project
@@ -36,4 +46,9 @@ Start Using
   precision_df = EvaluationMetricHelper.calculate_precision_from_dataframe("path/to/csv")
   print(precision_df)
 ```
+
+
+## Authors
+
+- [Rohan Amatya](https://github.com/rohanneps)
 
