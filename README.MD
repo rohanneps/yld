@@ -43,8 +43,13 @@ Start Using
 
 ```python
   from yld_utils.classification import EvaluationMetricHelper
-  precision_df = EvaluationMetricHelper.calculate_precision_from_dataframe("path/to/csv")
-  print(precision_df)
+  EvaluationMetricHelper.calculate_accuracy_from_file("path/to/csv")
+  EvaluationMetricHelper.calculate_f1_score_from_file("path/to/csv")
+  EvaluationMetricHelper.calculate_precision_from_file("path/to/csv")
+  EvaluationMetricHelper.calculate_recall_from_file("path/to/csv")
+
+  EvaluationMetricHelper.calculate_precision_and_recall_from_file("path/to/csv")
+  EvaluationMetricHelper.calculate_all_eval_metrices_from_file("path/to/csv")
 ```
 
 
