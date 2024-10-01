@@ -48,21 +48,8 @@ class EvaluationMetricHelper:
     @classmethod
     @_logger.log_and_catch_exception
     def calculate_all_eval_metrices_from_data(cls, prediction_df: DataFrame) -> DataFrame:
-        base_eval_metrics_df: DataFrame = cls._calculate_tp_fp_and_fn(prediction_df)
-        model_total_preds_df = (
-            prediction_df.groupby([MODEL_COL])[PREDICTION_COL].count().reset_index()
-        )
-        acc_df = model_total_preds_df.merge(
-            base_eval_metrics_df[[MODEL_COL, cls.TRUE_POSTIVE_COL]]
-            .groupby([MODEL_COL])
-            .sum()
-            .reset_index(),
-            on=[MODEL_COL],
-            how="inner",
-        )
-        acc_df[ACCURACY_COL] = acc_df[cls.TRUE_POSTIVE_COL] / acc_df[PREDICTION_COL]
-        acc_df = cls._aggegrate_evaluation_by_model(ACCURACY_COL, acc_df)
-        f1_score_df = cls.calculate_f1_score_from_dataframe(prediction_df, False)
+        acc_df: DataFrame = cls.calculate_accuracy_from_dataframe(prediction_df)
+        f1_score_df: DataFrame = cls.calculate_f1_score_from_dataframe(prediction_df, False)
         return acc_df.merge(f1_score_df, on=[MODEL_COL], how="inner")
    
     @classmethod
@@ -195,7 +182,6 @@ class EvaluationMetricHelper:
             fp_df, on=[MODEL_COL, CLASS_COL], how="left"
         )
         eval_metrics_df.fillna(value=0, inplace=True)
-        # aggregate base eval metrices per model-class
         return eval_metrics_df
 
     @classmethod
