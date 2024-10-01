@@ -50,13 +50,13 @@ class EvaluationMetricHelper:
     def calculate_f1_score_from_dataframe(cls, prediction_df: DataFrame) -> DataFrame:
         precision_df: DataFrame = cls.calculate_precision_from_dataframe(prediction_df)
         recall_df: DataFrame = cls.calculate_recall_from_dataframe(prediction_df)
-        base_eval_metrics_df = precision_df.merge(
+        f1_score_df = precision_df.merge(
             recall_df, on=[MODEL_COL], how="inner"
         )
-        base_eval_metrics_df[F1_SCORE_COL] = (
-            (2 * base_eval_metrics_df[PRECISION_COL] * base_eval_metrics_df[RECALL_COL])
-        ) / (base_eval_metrics_df[PRECISION_COL] + base_eval_metrics_df[RECALL_COL])
-        return cls._aggegrate_evaluation_by_model(F1_SCORE_COL, base_eval_metrics_df)
+        f1_score_df[F1_SCORE_COL] = (
+            (2 * f1_score_df[PRECISION_COL] * f1_score_df[RECALL_COL])
+        ) / (f1_score_df[PRECISION_COL] + f1_score_df[RECALL_COL])
+        return f1_score_df[[MODEL_COL, F1_SCORE_COL]]
 
     @classmethod
     @_logger.log_and_catch_exception
@@ -80,12 +80,7 @@ class EvaluationMetricHelper:
     @classmethod
     def _aggegrate_evaluation_by_model(cls, col_name: str, eval_metrics_df: DataFrame) -> DataFrame:
         return (
-            eval_metrics_df[
-                [
-                    MODEL_COL,
-                    col_name
-                ]
-            ]
+            eval_metrics_df[[MODEL_COL, col_name]]
             .groupby([MODEL_COL])
             .mean()
             .reset_index()
