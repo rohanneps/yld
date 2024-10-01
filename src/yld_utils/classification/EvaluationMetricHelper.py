@@ -9,8 +9,7 @@ from yld_utils.constants import (
     PREDICTION_COL,
     RECALL_COL
 )
-from yld_utils.utils.FileHelper import FileHelper
-from yld_utils.utils.LogHelper import LogHelper
+from yld_utils.utils import FileHelper, LogHelper
 
 _logger = LogHelper()
 
@@ -41,7 +40,7 @@ class EvaluationMetricHelper:
     @classmethod
     @_logger.log_and_catch_exception
     def calculate_accuracy_from_file(cls, file_path):
-        df: Optional[DataFrame] = FileHelper.read_csv_from_path(file_path, _logger)
+        df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_accuracy_from_dataframe(df)
 
@@ -61,7 +60,7 @@ class EvaluationMetricHelper:
     @classmethod
     @_logger.log_and_catch_exception
     def calculate_f1_score_from_file(cls, file_path):
-        df: Optional[DataFrame] = FileHelper.read_csv_from_path(file_path, _logger)
+        df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_f1_score_from_dataframe(df)
 
@@ -89,7 +88,7 @@ class EvaluationMetricHelper:
     @classmethod
     @_logger.log_and_catch_exception
     def calculate_precision_from_file(cls, file_path: str):
-        df: Optional[DataFrame] = FileHelper.read_csv_from_path(file_path, _logger)
+        df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_precision_from_dataframe(df)
 
@@ -108,7 +107,7 @@ class EvaluationMetricHelper:
     @classmethod
     @_logger.log_and_catch_exception
     def calculate_recall_from_file(cls, file_path: str):
-        df: DataFrame = FileHelper.read_csv_from_path(file_path, _logger)
+        df: DataFrame = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_recall_from_dataframe(df)
 
@@ -158,3 +157,7 @@ class EvaluationMetricHelper:
         eval_metrics_df.fillna(value=0, inplace=True)
         # aggregate base eval metrices per model-class
         return eval_metrics_df
+
+    @classmethod
+    def _read_from_file(cls, file_path: str) -> Optional[DataFrame]:
+        return FileHelper.read_csv_from_path(file_path, _logger, [MODEL_COL, CLASS_COL, PREDICTION_COL])

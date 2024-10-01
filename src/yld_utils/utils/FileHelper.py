@@ -11,10 +11,14 @@ class FileHelper:
 
     @classmethod
     def read_csv_from_path(
-        cls, file_path: str, logger: LogHelper
+        cls, file_path: str, logger: LogHelper, required_headers: list[str]
     ) -> Optional[DataFrame]:
         if os.path.exists(file_path):
-            return pd.read_csv(
+            df: pd.DataFrame = pd.read_csv(
                 file_path, sep=cls.COLUMN_SEPARATOR, encoding=cls.ENCODING
             )
+            if set(required_headers) == set(df.columns):
+                return df
+            logger._logger.debug(f"Missing input column {','.join(list(set(required_headers) - set(df.columns)))}")
+            return 
         logger._logger.debug(f"File {file_path} not found for evaluation")
