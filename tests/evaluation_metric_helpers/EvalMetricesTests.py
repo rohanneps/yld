@@ -1,7 +1,7 @@
 from unittest import TestCase
 import pytest
 from pandas import DataFrame
-from yld_utils.classification.EvaluationMetricHelper import EvaluationMetricHelper
+from yld_utils.classification import EvaluationMetricHelper
 from yld_utils.constants import (
     ACCURACY_COL,
     CLASS_COL,
