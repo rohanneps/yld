@@ -36,11 +36,10 @@ class FailureTests(TestBase):
     @pytest.mark.file_eval
     def test_WHEN_input_file_has_missing_header_THEN_recall_returns_None(self):
         self.test_file_path: str = "./test_model.csv"
-        def _get_incorrect_columns() -> DataFrame:
+        def _get_incorrect_columns_dataframe() -> DataFrame:
             df: DataFrame = pandas.read_csv(self.test_file_path, sep=FileHelper.COLUMN_SEPARATOR)
-            df.rename(columns={MODEL_COL: "new_column"}, inplace=True)
-            return df
+            return df.rename(columns={MODEL_COL: "new_column"}, inplace=True)
 
-        with patch.object(pandas, "read_csv", side_effect=[_get_incorrect_columns()]):
+        with patch.object(pandas, "read_csv", side_effect=[_get_incorrect_columns_dataframe()]):
             recall_df: DataFrame = EvaluationMetricHelper.calculate_recall_from_file(self.test_file_path)
         assert recall_df is None

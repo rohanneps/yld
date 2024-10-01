@@ -37,20 +37,20 @@ class EvalMetricesTests(TestBase):
         assert f1_score_df.equals(expected_f1_score_df)
 
     @pytest.mark.data_eval
-    def test_precision_from_data(self):
-        precision_df: DataFrame = (
-            EvaluationMetricHelper.calculate_precision_from_dataframe(self.input_df)
-        )
-        expected_precision_df: DataFrame = self._get_expected_output_df([PRECISION_COL])
-        assert precision_df.equals(expected_precision_df)
-
-    @pytest.mark.data_eval
     def test_precision_and_recall_from_data(self):
         precision_recall_df: DataFrame = EvaluationMetricHelper.calculate_precision_and_recall_from_dataframe(
             self.input_df
         )
         expected_precision_recall_df: DataFrame = self._get_expected_output_df([PRECISION_COL, RECALL_COL])
         assert precision_recall_df.equals(expected_precision_recall_df)
+
+    @pytest.mark.data_eval
+    def test_precision_from_data(self):
+        precision_df: DataFrame = (
+            EvaluationMetricHelper.calculate_precision_from_dataframe(self.input_df)
+        )
+        expected_precision_df: DataFrame = self._get_expected_output_df([PRECISION_COL])
+        assert precision_df.equals(expected_precision_df)
 
     @pytest.mark.data_eval
     def test_recall_from_data(self):
@@ -85,20 +85,20 @@ class EvalMetricesTests(TestBase):
         assert f1_score_df.equals(expected_f1_score_df)
 
     @pytest.mark.file_eval
-    def test_precision_from_file(self):
-        precision_df: DataFrame = EvaluationMetricHelper.calculate_precision_from_file(
-            self.test_file_path
-        )
-        expected_precision_df: DataFrame = self._get_expected_output_df([PRECISION_COL])
-        assert precision_df.equals(expected_precision_df)
-
-    @pytest.mark.file_eval
     def test_precision_and_recall_from_file(self):
         precision_recall_df: DataFrame = EvaluationMetricHelper.calculate_precision_and_recall_from_file(
             self.test_file_path
         )
         expected_precision_recall_df: DataFrame = self._get_expected_output_df([PRECISION_COL, RECALL_COL])
         assert precision_recall_df.equals(expected_precision_recall_df)
+
+    @pytest.mark.file_eval
+    def test_precision_from_file(self):
+        precision_df: DataFrame = EvaluationMetricHelper.calculate_precision_from_file(
+            self.test_file_path
+        )
+        expected_precision_df: DataFrame = self._get_expected_output_df([PRECISION_COL])
+        assert precision_df.equals(expected_precision_df)
 
     @pytest.mark.file_eval
     def test_recall_from_file(self):

@@ -40,7 +40,7 @@ class EvaluationMetricHelper:
 
     @classmethod
     @_logger.log_and_catch_exception
-    def calculate_accuracy_from_file(cls, file_path):
+    def calculate_accuracy_from_file(cls, file_path) -> Optional[DataFrame]:
         df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_accuracy_from_dataframe(df)
@@ -67,7 +67,7 @@ class EvaluationMetricHelper:
    
     @classmethod
     @_logger.log_and_catch_exception
-    def calculate_all_eval_metrices_from_file(cls, file_path):
+    def calculate_all_eval_metrices_from_file(cls, file_path) -> Optional[DataFrame]:
         df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_all_eval_metrices_from_data(df)
@@ -85,7 +85,7 @@ class EvaluationMetricHelper:
 
     @classmethod
     @_logger.log_and_catch_exception
-    def calculate_f1_score_from_file(cls, file_path):
+    def calculate_f1_score_from_file(cls, file_path) -> Optional[DataFrame]:
         df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_f1_score_from_dataframe(df)
@@ -104,7 +104,7 @@ class EvaluationMetricHelper:
 
     @classmethod
     @_logger.log_and_catch_exception
-    def calculate_precision_from_file(cls, file_path: str):
+    def calculate_precision_from_file(cls, file_path: str) -> Optional[DataFrame]:
         df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_precision_from_dataframe(df)
@@ -118,7 +118,7 @@ class EvaluationMetricHelper:
 
     @classmethod
     @_logger.log_and_catch_exception
-    def calculate_precision_and_recall_from_file(cls, file_path: str):
+    def calculate_precision_and_recall_from_file(cls, file_path: str) -> Optional[DataFrame]:
         df: Optional[DataFrame] = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_precision_and_recall_from_dataframe(df)
@@ -137,7 +137,7 @@ class EvaluationMetricHelper:
 
     @classmethod
     @_logger.log_and_catch_exception
-    def calculate_recall_from_file(cls, file_path: str):
+    def calculate_recall_from_file(cls, file_path: str) -> Optional[DataFrame]:
         df: DataFrame = cls._read_from_file(file_path)
         if df is not None:
             return cls.calculate_recall_from_dataframe(df)

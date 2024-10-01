@@ -5,9 +5,9 @@ from yld_utils.constants import LOG_DIR, LOG_FILE_NAME
 
 
 class LogHelper:
+    CONSOLE_LOG_LEVEL: int = logging.INFO
     LOG_FILE_NAME: str = os.path.join(LOG_DIR, LOG_FILE_NAME)
     LOG_FILE_LOG_LEVEL: int = logging.DEBUG
-    CONSOLE_LOG_LEVEL: int = logging.INFO
 
     def log_and_catch_exception(self, func) -> Any:
         def wrapper(*args, **kwargs):

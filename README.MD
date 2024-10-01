@@ -1,7 +1,7 @@
 
 # Evaluation Metrics Util
 
-This project is used to evalaute classification model performance.
+This project is used to evaluate classification model performances
 
 
 ## Tech Stack
